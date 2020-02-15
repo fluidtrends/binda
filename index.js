@@ -1,8 +1,7 @@
 const FileAdapter = require('./src/FileAdapter')
-const ImageAdapter = require('./src/ImageAdapter')
-
+const RemoteImageAdapter = require('./src/RemoteImageAdapter')
 
 module.exports = {
-    FileAdapter,
-    ImageAdapter
+  FileAdapter,
+  RemoteImageAdapter
 }

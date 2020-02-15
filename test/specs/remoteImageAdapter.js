@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 
 const savor = require('savor')
-const { ImageAdapter } = require('../..')
+const { RemoteImageAdapter } = require('../..')
 const stream = require('stream')
 
 savor
@@ -10,7 +10,7 @@ savor
     const newProps = {
       name: 'imgAdapter'
     }
-    const image = new ImageAdapter(newProps)
+    const image = new RemoteImageAdapter(newProps)
 
     const expectedMessage =
       'Cannot load image because url is a required argument'
@@ -21,7 +21,7 @@ savor
   })
 
   .add('should throw an error given an invalid url', async (context, done) => {
-    const image = new ImageAdapter()
+    const image = new RemoteImageAdapter()
     const url = ''
     const fileName = 'logo.png'
 
@@ -36,7 +36,7 @@ savor
   .add(
     'should throw an error given an invalid fileName',
     async (context, done) => {
-      const image = new ImageAdapter()
+      const image = new RemoteImageAdapter()
       const url =
         'https://raw.githubusercontent.com/fluidtrends/binda/master/logo.png'
       const fileName = ''
@@ -53,12 +53,12 @@ savor
   .add(
     'should throw an error given an invalid url and fileName',
     async (context, done) => {
-      const image = new ImageAdapter()
+      const image = new RemoteImageAdapter()
       const url = 'https://raw.githubusercontent.com/fluidtrends/binda'
       const fileName = 'logo.png'
 
-      const expectedMessage = ImageAdapter.ERRORS.CANNOT_LOAD(
-        ImageAdapter.MESSAGES.BAD_STATUS_CODE
+      const expectedMessage = RemoteImageAdapter.ERRORS.CANNOT_LOAD(
+        RemoteImageAdapter.MESSAGES.BAD_STATUS_CODE
       )
 
       savor.promiseShouldFail(image.download(url, fileName), done, error => {
@@ -70,7 +70,7 @@ savor
   .add(
     'should load a path given an url and fileName',
     async (context, done) => {
-      const image = new ImageAdapter()
+      const image = new RemoteImageAdapter()
       const url =
         'https://raw.githubusercontent.com/fluidtrends/binda/master/logo.png'
       const fileName = 'logo.png'

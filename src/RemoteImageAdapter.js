@@ -1,6 +1,5 @@
 const fs = require('fs')
 const request = require('request')
-const path = require('path')
 
 class _ {
   constructor(props) {
