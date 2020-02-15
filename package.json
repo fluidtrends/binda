@@ -1,0 +1,29 @@
+{
+  "name": "binda",
+  "version": "1.0.0",
+  "description": "Bindable Data Adaptors",
+  "scripts": {
+    "test": "savor test",
+    "coverage": "savor coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fluidtrends/binda.git"
+  },
+  "main": "index.js",
+  "author": "I. Dan Calinescu <idancalinescu@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fluidtrends/binda/issues"
+  },
+  "homepage": "https://github.com/fluidtrends/binda",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "fs-extra": "^7.0.0",
+    "fs-readdir-recursive": "^1.1.0",
+    "js-base64": "^2.5.2"
+  },
+  "devDependencies": {
+    "savor": "^1.1.2"
+  }
+}
