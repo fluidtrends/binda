@@ -1,7 +1,7 @@
 <p align="center"> <img src="https://raw.githubusercontent.com/fluidtrends/binda/master/logo.png" width="256px"> 
 
 <h1 align="center"> Binda </h1>
-<h3 align="center"> Bindable Data Bindable Data Adapters </h3>
+<h3 align="center"> Bindable Data Adapters </h3>
 <p align="center"> Parse data streams into pluggable adapters </p>
 <p align="center"> <img src="https://img.shields.io/github/package-json/v/idancali/binda?color=green"/></p>
 

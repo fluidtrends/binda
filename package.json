@@ -1,6 +1,6 @@
 {
   "name": "binda",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Bindable Data Adapters",
   "scripts": {
     "test": "savor test",
