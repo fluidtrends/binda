@@ -68,7 +68,7 @@ savor
   )
 
   .add(
-    'should load a path given an url and fileName',
+    'should return a stream given a valid url and fileName',
     async (context, done) => {
       const image = new RemoteImageAdapter()
       const url =
