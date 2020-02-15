@@ -1,4 +1,4 @@
-<p align="center"> <img src="https://raw.githubusercontent.com/fluidtrends/rara/master/logo.png" width="256px"> 
+<p align="center"> <img src="https://raw.githubusercontent.com/fluidtrends/binda/master/logo.png" width="256px"> 
 
 <h1 align="center"> Binda </h1>
 <h3 align="center"> Bindable Data Bindable Data Adapters </h3>
