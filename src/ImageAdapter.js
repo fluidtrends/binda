@@ -11,34 +11,38 @@ class _ {
     return this._props
   }
 
-  get path() {
-    return !this.dir || !this.filepath
-      ? null
-      : path.resolve(this.dir, this.filepath)
-  }
-
-  get exists() {
-    return this.path && fs.existsSync(path.resolve(this.path))
-  }
-
   download(url, fileName) {
+    if (!fileName) {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_LOAD('fileName is a required argument'))
+      )
+    }
+
+    if (!url) {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_LOAD('url is a required argument'))
+      )
+    }
+
     return new Promise((resolve, reject) => {
-      try {
-        request.head(url, function(err, res, body) {
-          resolve(request(url).pipe(fs.createWriteStream(fileName)))
-        })
-      } catch (error) {
-        reject(new Error(_.ERRORS.CANNOT_LOAD(error.message)))
-      }
+      request.head(url, (err, res, body) => {
+        if (res.statusCode !== 200) {
+          reject(new Error(_.ERRORS.CANNOT_LOAD(_.MESSAGES.BAD_STATUS_CODE)))
+        }
+        resolve(request(url).pipe(fs.createWriteStream(fileName)))
+      })
     })
   }
 }
 
 _.ERRORS = {
   CANNOT_LOAD: reason =>
-    reason ? `Cannot load image because ${reason}` : `Cannot load image`,
-  CANNOT_SAVE: reason =>
-    reason ? `Cannot save image because ${reason}` : `Cannot save image`
+    reason ? `Cannot load image because ${reason}` : `Cannot load image`
+}
+
+_.MESSAGES = {
+  NO_IMAGE: 'no image retrieved',
+  BAD_STATUS_CODE: 'the url returned a error code'
 }
 
 module.exports = _
