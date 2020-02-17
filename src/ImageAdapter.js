@@ -1,5 +1,6 @@
 const fs = require('fs')
 const request = require('request')
+const stream = require('stream')
 
 class _ {
   constructor(props) {
@@ -32,16 +33,36 @@ class _ {
       })
     })
   }
+  process(image) {
+    if (!(image instanceof stream.Stream)) {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_IMAGE_FORMAT))
+      )
+    }
+
+    const writeAbleImg = stream.Writable()
+
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(image.pipe(writeAbleImg))
+      } catch (error) {
+        reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
+      }
+    })
+  }
 }
 
 _.ERRORS = {
   CANNOT_LOAD: reason =>
-    reason ? `Cannot load image because ${reason}` : `Cannot load image`
+    reason ? `Cannot load image because ${reason}` : `Cannot load image`,
+  CANNOT_PROCESS: reason =>
+    reason ? `Cannot process image because ${reason}` : `Cannot process image`
 }
 
 _.MESSAGES = {
   NO_IMAGE: 'no image retrieved',
-  BAD_STATUS_CODE: 'the url returned a error code'
+  BAD_STATUS_CODE: 'the url returned a error code',
+  WRONG_IMAGE_FORMAT: 'wrong format image. Expected a stream'
 }
 
 module.exports = _
