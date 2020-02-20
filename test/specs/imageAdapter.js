@@ -3,8 +3,6 @@
 const savor = require('savor')
 const { ImageAdapter } = require('../..')
 const stream = require('stream')
-const fs = require('fs')
-const util = require('util')
 
 savor
 
