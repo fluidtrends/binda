@@ -99,21 +99,6 @@ savor
   .add(
     'should return a stream given image as a stream (image taken from assets)',
     async (context, done) => {
-      const image = new ImageAdapter()
-      const promiseReadFile = util.promisify(fs.readFile)
-      try {
-        const assetImg = await promiseReadFile('test/assets/hello.png')
-        console.log(assetImg)
-      } catch (err) {
-        return new Error(err.message)
-      }
-
-      // const returnedImageStream = await image.process(mockedImgStream)
-
-      // context.expect(returnedImageStream).to.be.an.instanceOf(stream.Stream)
-      // context.expect(returnedImageStream._writableState).to.be.a('object')
-      // context.expect(returnedImageStream.writable).to.be.true
-
       done()
     }
   )
