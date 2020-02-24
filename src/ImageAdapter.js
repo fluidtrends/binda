@@ -33,11 +33,26 @@ class _ {
       })
     })
   }
+
   process(image) {
     if (!(image instanceof stream.Stream)) {
       return Promise.reject(
         new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_IMAGE_FORMAT))
       )
+    }
+
+    const stringPathSplit = image.path ? image.path.split('.') : ''
+
+    const imageExtension = stringPathSplit[stringPathSplit.length - 1]
+
+    if (imageExtension === 'remote') {
+      image.on('data', chunk => {
+        const remoteImageUrl = chunk.toString()
+        const imageName = stringPathSplit[stringPathSplit.length - 3]
+        const imageType = stringPathSplit[stringPathSplit.length - 2]
+
+        return this.download(remoteImageUrl, `${imageName}${imageType}`)
+      })
     }
 
     const writeAbleImg = stream.Writable()

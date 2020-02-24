@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-expressions */
 
 const savor = require('savor')
-const { ImageAdapter } = require('../..')
 const stream = require('stream')
 const fs = require('fs')
-const util = require('util')
+const path = require('path')
+const { ImageAdapter } = require('../..')
 
 savor
 
@@ -63,23 +63,6 @@ savor
   })
 
   .add(
-    'should throw an error given an invalid url and fileName',
-    (context, done) => {
-      const image = new ImageAdapter()
-      const url = 'https://raw.githubusercontent.com/fluidtrends/binda'
-      const fileName = 'logo.png'
-
-      const expectedMessage = ImageAdapter.ERRORS.CANNOT_LOAD(
-        ImageAdapter.MESSAGES.BAD_STATUS_CODE
-      )
-
-      savor.promiseShouldFail(image.download(url, fileName), done, error => {
-        context.expect(error.message).to.equal(expectedMessage)
-      })
-    }
-  )
-
-  .add(
     'should return a stream given image as a stream',
     async (context, done) => {
       const image = new ImageAdapter()
@@ -99,10 +82,42 @@ savor
   .add(
     'should return a stream given image as a stream (image taken from assets)',
     async (context, done) => {
+      const image = new ImageAdapter()
+      savor.addAsset('assets/hello.png', 'hello.png', context)
+
+      const assetImgStream = fs.createReadStream(
+        path.resolve(context.dir, 'hello.png')
+      )
+
+      const returnedImageStream = await image.process(assetImgStream)
+
+      context.expect(returnedImageStream).to.be.an.instanceOf(stream.Stream)
+      context.expect(returnedImageStream._writableState).to.be.a('object')
+      context.expect(returnedImageStream.writable).to.be.true
+
       done()
     }
   )
 
+  .add(
+    'should return a stream given REMOTE image as a stream (image taken from assets)',
+    async (context, done) => {
+      const image = new ImageAdapter()
+      savor.addAsset('assets/logo.png.remote', 'logo.png.remote', context)
+
+      const assetImgStream = fs.createReadStream(
+        path.resolve(context.dir, 'logo.png.remote')
+      )
+
+      const returnedImageStream = await image.process(assetImgStream)
+
+      context.expect(returnedImageStream).to.be.an.instanceOf(stream.Stream)
+      context.expect(returnedImageStream._writableState).to.be.a('object')
+      context.expect(returnedImageStream.writable).to.be.true
+
+      done()
+    }
+  )
   .add(
     'should return a stream given a valid url and fileName',
     async (context, done) => {
