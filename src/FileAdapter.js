@@ -1,156 +1,111 @@
-const ejs = require('ejs')
-const fs = require('fs-extra')
-const path = require('path')
+const fs = require('fs')
+const stream = require('stream')
+
+const ImageAdapter = require('./ImageAdapter')
 
 class _ {
-    constructor(props) {
-        this._props = Object.assign({}, props)
+  constructor(props) {
+    this._props = { ...props, ...{} }
+  }
+
+  get props() {
+    return this._props
+  }
+
+  get type() {
+    return this._type || _.TYPES.ASSET
+  }
+
+  detectType(fileStream) {
+    if (this._type) {
+      // Not necessary
+      return
     }
 
-    get props() {
-        return this._props
+    // Figure out the file's extension
+    const stringPathSplit = fileStream.path ? fileStream.path.split('.') : ''
+
+    let fileExtension = stringPathSplit[
+      stringPathSplit.length - 1
+    ].toUpperCase()
+
+    fileExtension =
+      fileExtension === 'REMOTE'
+        ? stringPathSplit[stringPathSplit.length - 2].toUpperCase()
+        : fileExtension
+
+    for (let [type, values] of Object.entries(_.TYPES)) {
+      if (values.includes(fileExtension)) {
+        // Looks like we recognize this type
+        this._type = type
+        return
+      }
+    }
+  }
+
+  get isCompilable() {
+    return !_.NONCOMPILABLE_TYPES.includes(this.type)
+  }
+
+  process(fileStream) {
+    if (
+      !(fileStream instanceof stream.Stream) ||
+      !fileStream.readable ||
+      !(typeof fileStream._readableState === 'object')
+    ) {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_FILE_FORMAT))
+      )
     }
 
-    get filepath() {
-        return this.props.filepath
+    // assign the file type
+    this.detectType(fileStream)
+
+    if (!this.isCompilable) {
+      // specific type not implemented yet
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.NO_COMPATIBLE_TYPE))
+      )
     }
 
-    get dir () {
-        return this.props.dir
-    }
-
-    get path() {
-        return (!this.dir || !this.filepath) ? null : path.resolve(this.dir, this.filepath)
-    }
-
-    get exists() {
-        return this.path && fs.existsSync(path.resolve(this.path))
-    }
-
-    get type () {
-        return this._type || _.TYPES.ASSET
-    }
-
-    detectType () {
-        if (this._type) {
-            // Not necessary
-            return 
+    return new Promise((resolve, reject) => {
+      try {
+        if (this.type === 'IMAGE') {
+          const imageAdapter = new ImageAdapter()
+          resolve(imageAdapter.process(fileStream))
         }
-
-        // Figure out the file's extension
-        const ext = path.extname(this.path).toUpperCase().substring(1)
-
-        for (let [type, values] of Object.entries(_.TYPES)) {
-            if (values.includes(ext)) {
-                // Looks like we recognize this type
-                this._type = values
-                return 
-            }
-        }
-    }
-
-    get isCompilable() {
-        return !_.NONCOMPILABLE_TYPES.includes(this.type)
-    }
-
-    compile(args, options = {}) {
-        if (!this.isCompilable) {
-            // No need to compile
-            return Promise.resolve()
-        }
-
-        return new Promise((resolve, reject) => {
-            try {
-                // Attempt to load the file 
-                const content = fs.readFileSync(this.path, 'utf8')
-
-                if (!content) {
-                    // Next let's make sure we stop right here for empty files
-                    resolve("")
-                    return
-                }
-
-                // Try to parse the file and catch syntax errors
-                const template = ejs.compile(content, {})
-
-                // Finally, let's see if we can validate it
-                const output = template(args)
-
-                // We're good
-                resolve(options.json ? JSON.parse(output, null, 2) : output)
-            } catch (error) {
-                reject(new Error(_.ERRORS.CANNOT_LOAD(error.message)))
-            }
-        })
-    }
-
-    load(args, options = {}) {
-        if (!this.exists) {
-            // First make sure the file exists
-            return Promise.reject(new Error(_.ERRORS.CANNOT_LOAD('it does not exist')))
-        }
-
-        // Let's see if this is a recognized file y]type 
-        this.detectType()
-
-        // Compile the file if necessary
-        return this.compile(args, options)
-    }
-
-    copy(dest) {
-        return new Promise((resolve, reject) => {
-            // Let's move the file over
-            fs.copySync(this.path, path.resolve(dest, this.filepath))
-            
-            resolve()
-        })    
-    }
-
-    save(dest, args = {}) {
-        if (!this.exists) {
-            // First make sure the file exists
-            return Promise.reject(new Error(_.ERRORS.CANNOT_SAVE('it does not exist')))
-        }
-
-        if (!fs.existsSync(dest)) {
-            // First make sure the destination location
-            return Promise.reject(new Error(_.ERRORS.CANNOT_SAVE('the destination does not exist')))
-        }
-
-        // Let's see if this is a recognized file type 
-        this.detectType()
-
-        // Create sub directories if necessary
-        const dir = path.resolve(this.dir, path.dirname(this.filepath))
-        fs.exists(dir) || fs.mkdirs(dir)
-
-        if (!this.isCompilable) {
-            // Let's move the file over
-            return this.copy(dest)
-        }
-
-        // Load and then save it
-        return this.load(args).then((output) => {
-            fs.writeFileSync(path.resolve(dest, this.filepath), output, 'utf8')
-        })
-
-    }
+      } catch (error) {
+        reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
+      }
+    })
+  }
 }
 
 _.ERRORS = {
-    CANNOT_LOAD: (reason) => reason ? `Cannot load file because ${reason}` : `Cannot load file`,
-    CANNOT_SAVE: (reason) => reason ? `Cannot save file because ${reason}` : `Cannot save file`
+  CANNOT_PROCESS: reason =>
+    reason ? `Cannot process file because ${reason}` : `Cannot load file`
 }
 
 _.TYPES = {
-    ASSET: "ASSET_TYPE",
-    IMAGE: ["PNG", "JPG", "JPEG", "GIF", "SVG"],
-    JSON: ["JSON"],
-    JAVASCRIPT: ["JS"],
-    CSS: ["CSS"],
-    MARKDOWN: ["MD"]
+  ASSET: 'ASSET_TYPE',
+  IMAGE: ['PNG', 'JPG', 'JPEG', 'GIF', 'SVG'],
+  JSON: ['JSON'],
+  JAVASCRIPT: ['JS'],
+  CSS: ['CSS'],
+  MARKDOWN: ['MD']
 }
 
-_.NONCOMPILABLE_TYPES = [ _.TYPES.ASSET, _.TYPES.IMAGE ]
+_.NONCOMPILABLE_TYPES = [
+  _.TYPES.JSON,
+  _.TYPES.JAVASCRIPT,
+  _.TYPES.CSS,
+  _.TYPES.MARKDOWN
+]
+
+_.MESSAGES = {
+  WRONG_FILE_FORMAT: 'wrong file format. Expected a ReadAble Stream.',
+  NO_COMPATIBLE_TYPE:
+    'no compatible type to process yet. You can help us by submitting a PR to: https://github.com/fluidtrends/binda'
+}
 
 module.exports = _

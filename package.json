@@ -1,10 +1,11 @@
 {
   "name": "binda",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "Bindable Data Adapters",
   "scripts": {
     "test": "savor test",
-    "coverage": "savor coverage"
+    "coverage": "savor coverage",
+    "open:coverage": "open coverage/lcov-report/index.html"
   },
   "repository": {
     "type": "git",
