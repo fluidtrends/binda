@@ -1,4 +1,3 @@
-const fs = require('fs')
 const ejs = require('ejs')
 const stream = require('stream')
 
@@ -27,7 +26,6 @@ class _ {
 
           const compiledTemplate = ejs.compile(templateData)
 
-          // Finally, let's see if we can validate it
           const output = compiledTemplate(data)
 
           const writeableTemplate = stream.Writable()
@@ -44,8 +42,6 @@ class _ {
 }
 
 _.ERRORS = {
-  CANNOT_LOAD: reason =>
-    reason ? `Cannot load template because ${reason}` : `Cannot load template`,
   CANNOT_PROCESS: reason =>
     reason
       ? `Cannot process template because ${reason}`
@@ -53,9 +49,7 @@ _.ERRORS = {
 }
 
 _.MESSAGES = {
-  NO_TEMPLATE: 'no template retrieved',
-  BAD_STATUS_CODE: 'the url returned a error code',
-  WRONG_TEMPLATE_FORMAT: 'wrong format template. Expected a stream'
+  WRONG_TEMPLATE_FORMAT: 'wrong template format. Expected a stream'
 }
 
 module.exports = _

@@ -18,6 +18,26 @@ savor
   })
 
   .add(
+    'should throw an error given a wrong data type to process',
+    (context, done) => {
+      const template = new TemplateAdapter()
+      const templateToProcess = 'template'
+
+      const expectedMessage = TemplateAdapter.ERRORS.CANNOT_PROCESS(
+        TemplateAdapter.MESSAGES.WRONG_TEMPLATE_FORMAT
+      )
+
+      savor.promiseShouldFail(
+        template.process(templateToProcess),
+        done,
+        error => {
+          context.expect(error.message).to.equal(expectedMessage)
+        }
+      )
+    }
+  )
+
+  .add(
     'should return a stream given template as a stream (template taken from assets)',
     async (context, done) => {
       const template = new TemplateAdapter()
