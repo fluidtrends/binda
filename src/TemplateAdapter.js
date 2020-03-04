@@ -24,7 +24,7 @@ class _ {
         template.on('data', chunk => {
           templateData = chunk.toString()
 
-          const compiledTemplate = ejs.compile(templateData)
+          const compiledTemplate = ejs.compile(templateData, options)
 
           const output = compiledTemplate(data)
 
