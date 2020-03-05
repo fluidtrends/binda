@@ -1,5 +1,6 @@
 const ejs = require('ejs')
 const stream = require('stream')
+const fs = require('fs')
 
 class _ {
   constructor(props) {
@@ -30,9 +31,17 @@ class _ {
 
           const writeableJavascriptFile = stream.Writable()
 
-          writeableJavascriptFile.data = output
+          try {
+            const outputStream = fs.createWriteStream(javascriptFile.path)
 
-          resolve(writeableJavascriptFile)
+            outputStream.write(output)
+
+            resolve(outputStream)
+          } catch (error) {
+            reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
+          }
+
+          writeableJavascriptFile.data = output
         })
       } catch (error) {
         reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
