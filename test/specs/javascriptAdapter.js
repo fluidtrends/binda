@@ -47,15 +47,10 @@ savor
         path.resolve(context.dir, 'test.js')
       )
 
-      const data = {
-        description: 'carmel',
-        info: '#roadto1mil'
-      }
-
       const returnedJavascriptStream = await javascript.process(
         assetJavascriptStream,
         {},
-        data
+        {}
       )
 
       context
