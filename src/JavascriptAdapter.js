@@ -36,8 +36,6 @@ class _ {
 
           const output = compiledJavascript(data)
 
-          const writeableJavascriptFile = stream.Writable()
-
           try {
             const outputStream = fs.createWriteStream(javascriptFile.path)
 
@@ -47,8 +45,6 @@ class _ {
           } catch (error) {
             reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
           }
-
-          writeableJavascriptFile.data = output
         })
       } catch (error) {
         reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
