@@ -38,6 +38,31 @@ savor
   )
 
   .add(
+    'should throw an error given a wrong file type to process',
+    (context, done) => {
+      const javascript = new JavascriptAdapter()
+
+      savor.addAsset('assets/test.html', 'test.html', context)
+
+      const assetHtmlStream = fs.createReadStream(
+        path.resolve(context.dir, 'test.html')
+      )
+
+      const expectedMessage = JavascriptAdapter.ERRORS.CANNOT_PROCESS(
+        JavascriptAdapter.MESSAGES.WRONG_EXTENSION_FORMAT
+      )
+
+      savor.promiseShouldFail(
+        javascript.process(assetHtmlStream),
+        done,
+        error => {
+          context.expect(error.message).to.equal(expectedMessage)
+        }
+      )
+    }
+  )
+
+  .add(
     'should return a stream given template as a stream (template taken from assets)',
     async (context, done) => {
       const javascript = new JavascriptAdapter()
@@ -62,4 +87,4 @@ savor
     }
   )
 
-  .run('[Binda] Template Adapter')
+  .run('[Binda] Javascript Adapter')

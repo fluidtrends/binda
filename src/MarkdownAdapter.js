@@ -1,5 +1,6 @@
 const marked = require('marked')
 const stream = require('stream')
+const { getFileExtension } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -14,6 +15,12 @@ class _ {
     if (!(template instanceof stream.Stream)) {
       return Promise.reject(
         new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_MARKDOWN_FORMAT))
+      )
+    }
+
+    if (getFileExtension(template.path) !== 'md') {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT))
       )
     }
 
@@ -47,7 +54,8 @@ _.ERRORS = {
 }
 
 _.MESSAGES = {
-  WRONG_MARKDOWN_FORMAT: 'wrong markdown format. Expected a stream'
+  WRONG_MARKDOWN_FORMAT: 'wrong markdown format. Expected a stream',
+  WRONG_EXTENSION_FORMAT: 'wrong file extension. Expected an markdown file'
 }
 
 module.exports = _

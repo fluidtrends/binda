@@ -38,6 +38,31 @@ savor
   )
 
   .add(
+    'should throw an error given a wrong file type to process',
+    (context, done) => {
+      const markdown = new MarkdownAdapter()
+
+      savor.addAsset('assets/test.js', 'test.js', context)
+
+      const assetJavascriptStream = fs.createReadStream(
+        path.resolve(context.dir, 'test.js')
+      )
+
+      const expectedMessage = MarkdownAdapter.ERRORS.CANNOT_PROCESS(
+        MarkdownAdapter.MESSAGES.WRONG_EXTENSION_FORMAT
+      )
+
+      savor.promiseShouldFail(
+        markdown.process(assetJavascriptStream),
+        done,
+        error => {
+          context.expect(error.message).to.equal(expectedMessage)
+        }
+      )
+    }
+  )
+
+  .add(
     'should return a stream given markdown as a stream (markdown taken from assets)',
     async (context, done) => {
       const markdown = new MarkdownAdapter()
