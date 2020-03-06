@@ -35,6 +35,30 @@ savor
     }
   )
 
+  .add(
+    'should throw an error given a wrong file type to process',
+    (context, done) => {
+      const image = new ImageAdapter()
+      savor.addAsset('assets/test.js', 'test.js', context)
+
+      const assetJavascriptStream = fs.createReadStream(
+        path.resolve(context.dir, 'test.js')
+      )
+
+      const expectedMessage = ImageAdapter.ERRORS.CANNOT_PROCESS(
+        ImageAdapter.MESSAGES.WRONG_EXTENSION_FORMAT
+      )
+
+      savor.promiseShouldFail(
+        image.process(assetJavascriptStream),
+        done,
+        error => {
+          context.expect(error.message).to.equal(expectedMessage)
+        }
+      )
+    }
+  )
+
   .add('should throw an error given an invalid url', (context, done) => {
     const image = new ImageAdapter()
     const url = ''
@@ -61,23 +85,6 @@ savor
       context.expect(error.message).to.equal(expectedMessage)
     })
   })
-
-  .add(
-    'should return a stream given image as a stream',
-    async (context, done) => {
-      const image = new ImageAdapter()
-      const mockedImgStream = stream.Readable({
-        read() {}
-      })
-      const returnedImageStream = await image.process(mockedImgStream)
-
-      context.expect(returnedImageStream).to.be.an.instanceOf(stream.Stream)
-      context.expect(returnedImageStream._writableState).to.be.a('object')
-      context.expect(returnedImageStream.writable).to.be.true
-
-      done()
-    }
-  )
 
   .add(
     'should return a stream given image as a stream (image taken from assets)',

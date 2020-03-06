@@ -1,6 +1,7 @@
 const fs = require('fs')
 const request = require('request')
 const stream = require('stream')
+const { getFileExtension } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -41,9 +42,15 @@ class _ {
       )
     }
 
+    if (_.TYPES.indexOf(getFileExtension(image.path)) === -1) {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT))
+      )
+    }
+
     const stringPathSplit = image.path ? image.path.split('.') : ''
 
-    const imageExtension = stringPathSplit[stringPathSplit.length - 1]
+    const imageExtension = getFileExtension(image.path)
 
     if (imageExtension === 'remote') {
       image.on('data', chunk => {
@@ -74,10 +81,15 @@ _.ERRORS = {
     reason ? `Cannot process image because ${reason}` : `Cannot process image`
 }
 
+_.TYPES = ['png', 'jpeg', 'remote', 'gif']
+
 _.MESSAGES = {
   NO_IMAGE: 'no image retrieved',
   BAD_STATUS_CODE: 'the url returned a error code',
-  WRONG_IMAGE_FORMAT: 'wrong format image. Expected a stream'
+  WRONG_IMAGE_FORMAT: 'wrong format image. Expected a stream',
+  WRONG_EXTENSION_FORMAT: `wrong file extension. Expected one of the following:${_.TYPES.map(
+    type => ` ${type}`
+  )}.`
 }
 
 module.exports = _

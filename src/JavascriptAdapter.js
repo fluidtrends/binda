@@ -1,6 +1,7 @@
 const ejs = require('ejs')
 const stream = require('stream')
 const fs = require('fs')
+const { getFileExtension } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -15,6 +16,12 @@ class _ {
     if (!(javascriptFile instanceof stream.Stream)) {
       return Promise.reject(
         new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_JAVASCRIPT_FORMAT))
+      )
+    }
+
+    if (getFileExtension(javascriptFile.path) !== 'js') {
+      return Promise.reject(
+        new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT))
       )
     }
 
@@ -58,7 +65,8 @@ _.ERRORS = {
 }
 
 _.MESSAGES = {
-  WRONG_JAVASCRIPT_FORMAT: 'wrong javascript file format. Expected a stream'
+  WRONG_JAVASCRIPT_FORMAT: 'wrong javascript file format. Expected a stream',
+  WRONG_EXTENSION_FORMAT: 'wrong file extension. Expected an javascript file'
 }
 
 module.exports = _
