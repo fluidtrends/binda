@@ -36,8 +36,6 @@ class _ {
 
           const output = compiledCss(data)
 
-          const writeableCssFile = stream.Writable()
-
           try {
             const outputStream = fs.createWriteStream(cssFile.path)
 
@@ -47,8 +45,6 @@ class _ {
           } catch (error) {
             reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
           }
-
-          writeableCssFile.data = output
         })
       } catch (error) {
         reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))

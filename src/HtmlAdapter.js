@@ -36,8 +36,6 @@ class _ {
 
           const output = compiledHtml(data)
 
-          const writeableHtmlFile = stream.Writable()
-
           try {
             const outputStream = fs.createWriteStream(htmlFile.path)
 
@@ -47,8 +45,6 @@ class _ {
           } catch (error) {
             reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
           }
-
-          writeableHtmlFile.data = output
         })
       } catch (error) {
         reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
