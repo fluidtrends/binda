@@ -1,7 +1,7 @@
 const fs = require('fs')
 const request = require('request')
 const stream = require('stream')
-const { getFileExtension } = require('../utils')
+const { getFileExtension, downloadRemoteFile } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -10,29 +10,6 @@ class _ {
 
   get props() {
     return this._props
-  }
-
-  download(url, fileName) {
-    if (!fileName) {
-      return Promise.reject(
-        new Error(_.ERRORS.CANNOT_LOAD('fileName is a required argument'))
-      )
-    }
-
-    if (!url) {
-      return Promise.reject(
-        new Error(_.ERRORS.CANNOT_LOAD('url is a required argument'))
-      )
-    }
-
-    return new Promise((resolve, reject) => {
-      request.head(url, (err, res, body) => {
-        if (res.statusCode !== 200) {
-          reject(new Error(_.ERRORS.CANNOT_LOAD(_.MESSAGES.BAD_STATUS_CODE)))
-        }
-        resolve(request(url).pipe(fs.createWriteStream(fileName)))
-      })
-    })
   }
 
   process(image) {
@@ -58,7 +35,7 @@ class _ {
         const imageName = stringPathSplit[stringPathSplit.length - 3]
         const imageType = stringPathSplit[stringPathSplit.length - 2]
 
-        return this.download(remoteImageUrl, `${imageName}${imageType}`)
+        return downloadRemoteFile(remoteImageUrl, `${imageName}${imageType}`)
       })
     }
 

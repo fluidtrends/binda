@@ -1,4 +1,4 @@
-const { getFileExtension } = require('../../utils')
+const { getFileExtension, downloadRemoteFile } = require('../../utils')
 
 const savor = require('savor')
 
@@ -22,4 +22,30 @@ savor
 
     done()
   })
+
+  .add('should throw an error given an invalid url', (context, done) => {
+    const url = ''
+    const fileName = 'logo.png'
+
+    const expectedMessage =
+      'Cannot load file because url is a required argument'
+
+    savor.promiseShouldFail(downloadRemoteFile(url, fileName), done, error => {
+      context.expect(error.message).to.equal(expectedMessage)
+    })
+  })
+
+  .add('should throw an error given an invalid fileName', (context, done) => {
+    const url =
+      'https://raw.githubusercontent.com/fluidtrends/binda/master/logo.png'
+    const fileName = ''
+
+    const expectedMessage =
+      'Cannot load file because fileName is a required argument'
+
+    savor.promiseShouldFail(downloadRemoteFile(url, fileName), done, error => {
+      context.expect(error.message).to.equal(expectedMessage)
+    })
+  })
+
   .run('[Binda] Utils')
