@@ -1,7 +1,7 @@
 const marked = require('marked')
 const stream = require('stream')
 const fs = require('fs')
-const { getFileExtension } = require('../utils')
+const { getFileExtension, downloadRemoteFile } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -19,10 +19,32 @@ class _ {
       )
     }
 
-    if (getFileExtension(template.path) !== 'md') {
+    const fileExtension = getFileExtension(template.path)
+
+    if (fileExtension !== 'md' && fileExtension !== 'remote') {
       return Promise.reject(
         new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT))
       )
+    }
+
+    const stringPathSplitted = template.path ? template.path.split('.') : ''
+
+    if (fileExtension === 'remote') {
+      template.on('data', chunk => {
+        const remoteFileUrl = chunk.toString()
+        const fileName = stringPathSplitted[stringPathSplitted.length - 3]
+        const fileType = stringPathSplitted[stringPathSplitted.length - 2]
+
+        if (fileType !== 'md') {
+          return Promise.reject(
+            new Error(
+              _.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT)
+            )
+          )
+        }
+
+        return downloadRemoteFile(remoteFileUrl, `${fileName}${fileType}`)
+      })
     }
 
     let markdownData = ''

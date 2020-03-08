@@ -99,23 +99,5 @@ savor
       done()
     }
   )
-  .add(
-    'should return a stream given a valid url and fileName',
-    async (context, done) => {
-      const image = new ImageAdapter()
-      const url =
-        'https://raw.githubusercontent.com/fluidtrends/binda/master/logo.png'
-      const fileName = 'logo.png'
-
-      const imageAsStream = await downloadRemoteFile(url, fileName)
-
-      context.expect(imageAsStream).to.be.an.instanceOf(stream.Stream)
-      context.expect(imageAsStream.path).to.equal(fileName)
-      context.expect(imageAsStream._writableState).to.be.a('object')
-      context.expect(imageAsStream.writable).to.be.true
-
-      done()
-    }
-  )
 
   .run('[Binda] Image Adapter')

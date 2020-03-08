@@ -52,8 +52,6 @@ class _ {
 }
 
 _.ERRORS = {
-  CANNOT_LOAD: reason =>
-    reason ? `Cannot load image because ${reason}` : `Cannot load image`,
   CANNOT_PROCESS: reason =>
     reason ? `Cannot process image because ${reason}` : `Cannot process image`
 }
