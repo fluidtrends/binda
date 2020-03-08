@@ -58,6 +58,26 @@ savor
   )
 
   .add(
+    'should return a stream given REMOTE file as a stream (file taken from assets)',
+    async (context, done) => {
+      const html = new HtmlAdapter()
+      savor.addAsset('assets/test.html.remote', 'test.html.remote', context)
+
+      const assetFileStream = fs.createReadStream(
+        path.resolve(context.dir, 'test.html.remote')
+      )
+
+      const returnedFileStream = await html.process(assetFileStream)
+
+      context.expect(returnedFileStream).to.be.an.instanceOf(stream.Stream)
+      context.expect(returnedFileStream._writableState).to.be.a('object')
+      context.expect(returnedFileStream.writable).to.be.true
+
+      done()
+    }
+  )
+
+  .add(
     'should return a stream given template as a stream (template taken from assets)',
     async (context, done) => {
       const html = new HtmlAdapter()

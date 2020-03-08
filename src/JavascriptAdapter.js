@@ -1,7 +1,7 @@
 const ejs = require('ejs')
 const stream = require('stream')
 const fs = require('fs')
-const { getFileExtension } = require('../utils')
+const { getFileExtension, downloadRemoteFile } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -19,10 +19,34 @@ class _ {
       )
     }
 
-    if (getFileExtension(javascriptFile.path) !== 'js') {
+    const fileExtension = getFileExtension(javascriptFile.path)
+
+    if (fileExtension !== 'js' && fileExtension !== 'remote') {
       return Promise.reject(
         new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT))
       )
+    }
+
+    const stringPathSplitted = javascriptFile.path
+      ? javascriptFile.path.split('.')
+      : ''
+
+    if (fileExtension === 'remote') {
+      javascriptFile.on('data', chunk => {
+        const remoteFileUrl = chunk.toString()
+        const fileName = stringPathSplitted[stringPathSplitted.length - 3]
+        const fileType = stringPathSplitted[stringPathSplitted.length - 2]
+
+        if (fileType !== 'js') {
+          return Promise.reject(
+            new Error(
+              _.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_EXTENSION_FORMAT)
+            )
+          )
+        }
+
+        return downloadRemoteFile(remoteFileUrl, `${fileName}${fileType}`)
+      })
     }
 
     let javascriptData = ''

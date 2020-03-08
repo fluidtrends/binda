@@ -84,6 +84,26 @@ savor
   )
 
   .add(
+    'should return a stream given REMOTE file as a stream (file taken from assets)',
+    async (context, done) => {
+      const markdown = new MarkdownAdapter()
+      savor.addAsset('assets/test.md.remote', 'test.md.remote', context)
+
+      const assetFileStream = fs.createReadStream(
+        path.resolve(context.dir, 'test.md.remote')
+      )
+
+      const returnedFileStream = await markdown.process(assetFileStream)
+
+      context.expect(returnedFileStream).to.be.an.instanceOf(stream.Stream)
+      context.expect(returnedFileStream._writableState).to.be.a('object')
+      context.expect(returnedFileStream.writable).to.be.true
+
+      done()
+    }
+  )
+
+  .add(
     'should return a stream given markdown as a stream (markdown taken from assets) - with OPTIONS',
     async (context, done) => {
       const markdown = new MarkdownAdapter()

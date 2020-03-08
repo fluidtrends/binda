@@ -1,6 +1,7 @@
 const ejs = require('ejs')
 const stream = require('stream')
 const fs = require('fs')
+const { getFileExtension, downloadRemoteFile } = require('../utils')
 
 class _ {
   constructor(props) {
@@ -16,6 +17,19 @@ class _ {
       return Promise.reject(
         new Error(_.ERRORS.CANNOT_PROCESS(_.MESSAGES.WRONG_TEMPLATE_FORMAT))
       )
+    }
+
+    const fileExtension = getFileExtension(template.path)
+    const stringPathSplitted = template.path ? template.path.split('.') : ''
+
+    if (fileExtension === 'remote') {
+      template.on('data', chunk => {
+        const remoteFileUrl = chunk.toString()
+        const fileName = stringPathSplitted[stringPathSplitted.length - 3]
+        const fileType = stringPathSplitted[stringPathSplitted.length - 2]
+
+        return downloadRemoteFile(remoteFileUrl, `${fileName}${fileType}`)
+      })
     }
 
     let templateData = ''
