@@ -57,15 +57,11 @@ savor
         {},
         data
       )
-      const streamData = JSON.parse(returnedTemplateStream.data)
 
       context.expect(returnedTemplateStream).to.be.an.instanceOf(stream.Stream)
       context.expect(returnedTemplateStream._writableState).to.be.a('object')
       context.expect(returnedTemplateStream.writable).to.be.true
-      context.expect(streamData.username).to.be.equal('hello')
-      context.expect(streamData.test).to.be.equal('test1234')
-      context.expect(streamData.info).to.be.equal('#roadto1mil')
-      context.expect(streamData.description).to.be.equal('carmel')
+
       done()
     }
   )

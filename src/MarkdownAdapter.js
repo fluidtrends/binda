@@ -1,5 +1,6 @@
 const marked = require('marked')
 const stream = require('stream')
+const fs = require('fs')
 const { getFileExtension } = require('../utils')
 
 class _ {
@@ -31,13 +32,17 @@ class _ {
         template.on('data', chunk => {
           markdownData = chunk.toString()
 
-          const html = marked(markdownData, options)
+          const htmlOutput = marked(markdownData, options)
 
-          const writeableHtmlOutput = stream.Writable()
+          try {
+            const outputStream = fs.createWriteStream(template.path)
 
-          writeableHtmlOutput.data = html
+            outputStream.write(htmlOutput)
 
-          resolve(writeableHtmlOutput)
+            resolve(outputStream)
+          } catch (error) {
+            reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
+          }
         })
       } catch (error) {
         reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))

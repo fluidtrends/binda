@@ -1,5 +1,6 @@
 const ejs = require('ejs')
 const stream = require('stream')
+const fs = require('fs')
 
 class _ {
   constructor(props) {
@@ -28,11 +29,15 @@ class _ {
 
           const output = compiledTemplate(data)
 
-          const writeableTemplate = stream.Writable()
+          try {
+            const outputStream = fs.createWriteStream(template.path)
 
-          writeableTemplate.data = output
+            outputStream.write(output)
 
-          resolve(writeableTemplate)
+            resolve(outputStream)
+          } catch (error) {
+            reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
+          }
         })
       } catch (error) {
         reject(new Error(_.ERRORS.CANNOT_PROCESS(error.message)))
