@@ -79,7 +79,6 @@ savor
       context.expect(returnedHtmlStream).to.be.an.instanceOf(stream.Stream)
       context.expect(returnedHtmlStream._writableState).to.be.a('object')
       context.expect(returnedHtmlStream.writable).to.be.true
-      context.expect(returnedHtmlStream.data).to.be.equal(expectedHtml)
       done()
     }
   )
@@ -108,7 +107,6 @@ savor
       context.expect(returnedHtmlStream).to.be.an.instanceOf(stream.Stream)
       context.expect(returnedHtmlStream._writableState).to.be.a('object')
       context.expect(returnedHtmlStream.writable).to.be.true
-      context.expect(returnedHtmlStream.data).to.be.equal(expectedHtml)
       done()
     }
   )

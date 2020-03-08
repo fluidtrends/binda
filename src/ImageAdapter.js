@@ -62,7 +62,7 @@ class _ {
       })
     }
 
-    const writeAbleImg = stream.Writable()
+    const writeAbleImg = fs.createWriteStream(image.path ? image.path : '')
 
     return new Promise((resolve, reject) => {
       try {
