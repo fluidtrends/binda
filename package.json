@@ -1,6 +1,6 @@
 {
   "name": "binda",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Bindable Data Adapters",
   "scripts": {
     "test": "savor test",
@@ -11,7 +11,11 @@
     "type": "git",
     "url": "git+https://github.com/fluidtrends/binda.git"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
   "author": "I. Dan Calinescu <idancalinescu@gmail.com>",
   "license": "MIT",
   "bugs": {

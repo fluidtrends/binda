@@ -2,7 +2,7 @@ const savor = require('savor')
 const stream = require('stream')
 const fs = require('fs')
 const path = require('path')
-const { JavascriptAdapter } = require('../..')
+const { JavascriptAdapter } = require('../../src')
 
 savor
 

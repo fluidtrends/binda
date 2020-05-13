@@ -2,7 +2,7 @@ const savor = require('savor')
 const stream = require('stream')
 const fs = require('fs')
 const path = require('path')
-const { TemplateAdapter } = require('../..')
+const { TemplateAdapter } = require('../../src')
 
 savor
 

@@ -4,8 +4,8 @@ const savor = require('savor')
 const stream = require('stream')
 const fs = require('fs')
 const path = require('path')
-const { ImageAdapter } = require('../..')
-const { downloadRemoteFile } = require('../../utils')
+const { ImageAdapter } = require('../../src')
+const { downloadRemoteFile } = require('../../src/utils')
 
 savor
 
