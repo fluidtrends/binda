@@ -1,7 +1,7 @@
 const marked = require('marked')
 const stream = require('stream')
 const fs = require('fs')
-const { getFileExtension, downloadRemoteFile } = require('../utils')
+const { getFileExtension, downloadRemoteFile } = require('./utils')
 
 class _ {
   constructor(props) {

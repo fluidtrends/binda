@@ -1,4 +1,4 @@
-const { getFileExtension, downloadRemoteFile } = require('../../utils')
+const { getFileExtension, downloadRemoteFile } = require('../../src/utils')
 
 const savor = require('savor')
 
